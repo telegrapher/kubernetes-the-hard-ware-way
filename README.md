@@ -1,6 +1,6 @@
 # Kubernetes The Hard(ware) Way
 
-This tutorial is 100% based on [Kubernetes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way). I wanted to perform the same learning experiment, but I have casually some hardware laying around so I will do exactly the same using a big Linux machine. I'm just forking their repo and adapting the instructions.
+This tutorial is 100% based on [Kubernetes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way). I wanted to perform the same learning experiment, but I have casually some hardware laying around so I will do exactly the same experiment but using a big Linux machine. I'm not doing anything more than forking their repo and adapting the instructions.
 
 This tutorial walks you through setting up Kubernetes the hard way using hardware. This guide is not for people looking for a fully automated command to bring up a Kubernetes cluster. If that's you then check out [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine), or the [Getting Started Guides](http://kubernetes.io/docs/getting-started-guides/).
 
