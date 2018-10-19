@@ -110,6 +110,14 @@ The compute instances in this lab will be provisioned using [Ubuntu Server](http
 Create three compute instances which will host the Kubernetes control plane:
 
 ```
+virt-install -n controller01 --os-type=Linux --os-variant=debian9 --ram=4096 --vcpus=1 --disk path=/opt/kubernetes/controller01.img,bus=virtio,size=10 \--cdrom ./Downloads/debian-9.5.0-amd64-netinst.iso --graphics spice --network network=kubernetes
+```
+```
+virt-clone --original controller01 --name controller02 --auto-clone
+virt-clone --original controller01 --name controller02 --auto-clone
+
+```
+```
 for i in 0 1 2; do
   gcloud compute instances create controller-${i} \
     --async \
