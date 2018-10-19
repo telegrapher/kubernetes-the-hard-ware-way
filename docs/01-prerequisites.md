@@ -26,29 +26,6 @@ Verify the installation:
 ```
 virsh --connect qemu:///system list --all
 ```
-### Set a Default Compute Region and Zone
-
-This tutorial assumes a default compute region and zone have been configured.
-
-If you are using the `gcloud` command-line tool for the first time `init` is the easiest way to do this:
-
-```
-gcloud init
-```
-
-Otherwise set a default compute region:
-
-```
-gcloud config set compute/region us-west1
-```
-
-Set a default compute zone:
-
-```
-gcloud config set compute/zone us-west1-c
-```
-
-> Use the `gcloud compute zones list` command to view additional regions and zones.
 
 ## Running Commands in Parallel with tmux
 
