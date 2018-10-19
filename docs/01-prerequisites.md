@@ -1,25 +1,31 @@
 # Prerequisites
 
-## Google Cloud Platform
+In this lab you will install the operating system and basic tools.
 
-This tutorial leverages the [Google Cloud Platform](https://cloud.google.com/) to streamline provisioning of the compute infrastructure required to bootstrap a Kubernetes cluster from the ground up. [Sign up](https://cloud.google.com/free/) for $300 in free credits.
+## One server
 
-[Estimated cost](https://cloud.google.com/products/calculator/#id=78df6ced-9c50-48f8-a670-bc5003f2ddaa) to run this tutorial: $0.22 per hour ($5.39 per day).
+I casually have floating around a 16 core/256 GB of RAM machine.
 
-> The compute resources required for this tutorial exceed the Google Cloud Platform free tier.
+## Operating system
 
-## Google Cloud Platform SDK
+Download and install [Debian Stretch](https://www.debian.org/). Since there are plenty of tutorials and great instructions on the Debian website, this is left as an exercise to the reader.
 
-### Install the Google Cloud SDK
+In this tutorial we'll assume a minimalist installation with only the base utilities and the SSH server to access the system. Everything else will be specified in the next steps.
 
-Follow the Google Cloud SDK [documentation](https://cloud.google.com/sdk/) to install and configure the `gcloud` command line utility.
+## KVM virtualization
 
-Verify the Google Cloud SDK version is 218.0.0 or higher:
+KVM and Xen are the reference hypervisors on Linux, I tend to favor KVM, but Xen wouldn't be a bad choice.
 
+### Install KVM
+
+As root:
 ```
-gcloud version
+apt install qemu-kvm libvirt-clients libvirt-daemon-system
 ```
-
+Verify the installation:
+```
+virsh --connect qemu:///system list --all
+```
 ### Set a Default Compute Region and Zone
 
 This tutorial assumes a default compute region and zone have been configured.
