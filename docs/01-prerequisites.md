@@ -4,7 +4,9 @@ In this lab you will install the operating system and basic tools.
 
 ## One server
 
-I casually have floating around a 16 core/256 GB of RAM machine.
+Since we plan to use KVM, the CPU should support the virtualization extensions (VT-x on Intel or VMX on AMD).
+
+I will use for this tutorial a machine that I casually have floating around with 16 core and 256 GB of RAM.
 
 ## Operating system
 
