@@ -10,27 +10,38 @@ The Kubernetes [networking model](https://kubernetes.io/docs/concepts/cluster-ad
 
 > Setting up network policies is out of scope for this tutorial.
 
-### Virtual Private Cloud Network
+### Virtual Network
 
-In this section a dedicated [Virtual Private Cloud](https://cloud.google.com/compute/docs/networks-and-firewalls#networks) (VPC) network will be setup to host the Kubernetes cluster.
+In this section a virtual network will be setup to host the Kubernetes cluster.
 
-Create the `kubernetes-the-hard-way` custom VPC network:
+Create the `kubernetes-the-hard-way` custom network using the `default` network as model:
 
+Dump the default network configuration:
 ```
-gcloud compute networks create kubernetes-the-hard-way --subnet-mode custom
+virsh --connect qemu:///system net-dumpxml default > default.xml
+cp default.xml kubernetes-the-hard-way.xml
+```
+Edit the new kubernetes-the-hard-way.xml file
+```
+<network>
+  <name>kubernetes-the-hard-way</name>
+  <forward mode='nat'/>
+  <bridge name='virbr1' stp='on' delay='0'/>
+  <ip address='192.168.10.1' netmask='255.255.255.0'>
+    <dhcp>
+      <range start='192.168.10.2' end='192.168.10.254'/>
+    </dhcp>
+  </ip>
+</network>
+```
+Create the network
+```
+virsh --connect qemu:///system net-define kubernetes-the-hard-way.xml
+virsh --connect qemu:///system net-autostart kubernetes-the-hard-way
+virsh --connect qemu:///system net-start kubernetes-the-hard-way
 ```
 
-A [subnet](https://cloud.google.com/compute/docs/vpc/#vpc_networks_and_subnets) must be provisioned with an IP address range large enough to assign a private IP address to each node in the Kubernetes cluster.
-
-Create the `kubernetes` subnet in the `kubernetes-the-hard-way` VPC network:
-
-```
-gcloud compute networks subnets create kubernetes \
-  --network kubernetes-the-hard-way \
-  --range 10.240.0.0/24
-```
-
-> The `10.240.0.0/24` IP address range can host up to 254 compute instances.
+> The `192.168.10.0/24` IP address range can host up to 254 compute instances.
 
 ### Firewall Rules
 
