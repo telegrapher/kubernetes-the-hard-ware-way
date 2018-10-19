@@ -111,6 +111,16 @@ Create three compute instances which will host the Kubernetes control plane:
 
 ```
 virt-install -n controller01 --os-type=Linux --os-variant=debian9 --ram=4096 --vcpus=1 --disk path=/opt/kubernetes/controller01.img,bus=virtio,size=10 \--cdrom ./Downloads/debian-9.5.0-amd64-netinst.iso --graphics spice --network network=kubernetes
+
+
+```
+In /etc/default/grub add "serial=tty0 console=ttyS0,115200n8" in the the GRUB_CMDLINE_LINUX option and then run sudo update-grub.
+
+Reboot
+
+Verify console access with:
+```
+virsh console controller01
 ```
 ```
 virt-clone --original controller01 --name controller02 --auto-clone
