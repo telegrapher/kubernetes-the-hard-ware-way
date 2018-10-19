@@ -1,6 +1,8 @@
-# Kubernetes The Hard Way
+# Kubernetes The Hard(ware) Way
 
-This tutorial walks you through setting up Kubernetes the hard way. This guide is not for people looking for a fully automated command to bring up a Kubernetes cluster. If that's you then check out [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine), or the [Getting Started Guides](http://kubernetes.io/docs/getting-started-guides/).
+This tutorial is 100% based on [Kubernetes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way). I wanted to perform the same learning experiment, but I have casually some hardware laying around so I will do exactly the same using a big Linux machine. I'm just forking their repo and adapting the instructions.
+
+This tutorial walks you through setting up Kubernetes the hard way using hardware. This guide is not for people looking for a fully automated command to bring up a Kubernetes cluster. If that's you then check out [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine), or the [Getting Started Guides](http://kubernetes.io/docs/getting-started-guides/).
 
 Kubernetes The Hard Way is optimized for learning, which means taking the long route to ensure you understand each task required to bootstrap a Kubernetes cluster.
 
@@ -8,7 +10,7 @@ Kubernetes The Hard Way is optimized for learning, which means taking the long r
 
 ## Target Audience
 
-The target audience for this tutorial is someone planning to support a production Kubernetes cluster and wants to understand how everything fits together.
+The target audience for this tutorial is someone planning to support a production Kubernetes cluster, wants to understand how everything fits together and wants to use some hardware that is lying around unused.
 
 ## Cluster Details
 
@@ -23,7 +25,7 @@ Kubernetes The Hard Way guides you through bootstrapping a highly available Kube
 
 ## Labs
 
-This tutorial assumes you have access to the [Google Cloud Platform](https://cloud.google.com). While GCP is used for basic infrastructure requirements the lessons learned in this tutorial can be applied to other platforms.
+This tutorial assumes you have access to one unused hardware machine. That machine will be split in different VMs, so hopefully the lessons learnt here can be translated to multiple hardware machines or any cloud deployment.
 
 * [Prerequisites](docs/01-prerequisites.md)
 * [Installing the Client Tools](docs/02-client-tools.md)
