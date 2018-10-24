@@ -22,7 +22,8 @@ KVM and Xen are the reference hypervisors on Linux, I tend to favor KVM, but Xen
 
 As root:
 ```
-apt install qemu-kvm libvirt-clients libvirt-daemon-system
+apt install qemu-kvm libvirt-clients libvirt-daemon-system 
+apt install virtinst --no-install-recommends
 ```
 Verify the installation:
 ```
