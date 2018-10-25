@@ -107,25 +107,20 @@ The compute instances in this lab will be provisioned using [Ubuntu Server](http
 
 ### Kubernetes Controllers
 
-Create three compute instances which will host the Kubernetes control plane:
+Create three compute instances which will host the Kubernetes control plane.
 
+Install the first VM, using virt-install
 ```
-virt-install -n controller01 --os-type=Linux --os-variant=debian9 --ram=4096 --vcpus=1 --disk path=/opt/kubernetes/controller01.img,bus=virtio,size=10 \--cdrom ./Downloads/debian-9.5.0-amd64-netinst.iso --graphics spice --network network=kubernetes
-
-
+virt-install --os-type=Linux --os-variant=debian9 --name controller01 --ram=4096 --vcpus=1 --disk path=/opt/kubernetes/images/controller01.qcow2,bus=virtio,size=10 --cdrom /opt/kubernetes/debian-9-amd64-netinst-serial.iso --network network=kubernetes-the-hard-way --graphics none
 ```
-In /etc/default/grub add "serial=tty0 console=ttyS0,115200n8" in the the GRUB_CMDLINE_LINUX option and then run sudo update-grub.
-
-Reboot
-
-Verify console access with:
+It should bring automatically the console to perform the installation, but if we get disconnected for some reason, it can be reattached using:
 ```
 virsh console controller01
 ```
+After the installation, clone the two missing controllers from the first:
 ```
 virt-clone --original controller01 --name controller02 --auto-clone
-virt-clone --original controller01 --name controller02 --auto-clone
-
+virt-clone --original controller01 --name controller03 --auto-clone
 ```
 ```
 for i in 0 1 2; do
