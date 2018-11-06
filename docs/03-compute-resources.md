@@ -103,7 +103,9 @@ kubernetes-the-hard-way  us-west1  XX.XXX.XXX.XX  RESERVED
 
 ## Compute Instances
 
-The compute instances in this lab will be provisioned using [Ubuntu Server](https://www.ubuntu.com/server) 18.04, which has good support for the [containerd container runtime](https://github.com/containerd/containerd). Each compute instance will be provisioned with a fixed private IP address to simplify the Kubernetes bootstrapping process.
+The compute instances in this lab will be provisioned using [Debian](https://www.debian.org) Stretch, which has good support for the [containerd container runtime](https://github.com/containerd/containerd). Each compute instance will be provisioned with a fixed private IP address to simplify the Kubernetes bootstrapping process.
+
+If you want to perform the complete installation over SSH, without X have a look at [this](https://github.com/telegrapher/debian-over-serial-port-howto)
 
 ### Kubernetes Controllers
 
