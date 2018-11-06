@@ -1,4 +1,4 @@
-# Kubernetes The Hard(ware) Way
+# Kubernetes The Hard(ware) Way WIP - UNFINISHED
 
 This tutorial is 100% based on [Kubernetes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way). I wanted to perform the same learning experiment, but I have casually some hardware laying around so I will do exactly the same experiment but using a big Linux machine. I'm not doing anything more than forking their repo and adapting the instructions.
 
