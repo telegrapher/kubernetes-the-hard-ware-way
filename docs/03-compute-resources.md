@@ -107,7 +107,7 @@ The compute instances in this lab will be provisioned using [Debian](https://www
 
 If you want to perform the complete installation over SSH, without X have a look at [this](https://github.com/telegrapher/debian-over-serial-port-howto)
 
-## Kubernetes Controllers
+### Kubernetes Controllers
 
 Create three compute instances which will host the Kubernetes control plane.
 
@@ -124,23 +124,8 @@ After the installation, clone the two missing controllers from the first:
 virt-clone --original controller01 --name controller02 --auto-clone
 virt-clone --original controller01 --name controller03 --auto-clone
 ```
-```
-for i in 0 1 2; do
-  gcloud compute instances create controller-${i} \
-    --async \
-    --boot-disk-size 200GB \
-    --can-ip-forward \
-    --image-family ubuntu-1804-lts \
-    --image-project ubuntu-os-cloud \
-    --machine-type n1-standard-1 \
-    --private-network-ip 10.240.0.1${i} \
-    --scopes compute-rw,storage-ro,service-management,service-control,logging-write,monitoring \
-    --subnet kubernetes \
-    --tags kubernetes-the-hard-way,controller
-done
-```
 
-## Kubernetes Workers
+### Kubernetes Workers
 
 Each worker instance requires a pod subnet allocation from the Kubernetes cluster CIDR range. The pod subnet allocation will be used to configure container networking in a later exercise. The `pod-cidr` instance metadata will be used to expose pod subnet allocations to compute instances at runtime.
 
@@ -153,21 +138,6 @@ virt-install --os-type=Linux --os-variant=debian9 --name worker01 --ram=32768 --
 
 virt-clone --original worker01 --name worker02 --auto-clone
 virt-clone --original worker01 --name worker03 --auto-clone
-
-for i in 0 1 2; do
-  gcloud compute instances create worker-${i} \
-    --async \
-    --boot-disk-size 200GB \
-    --can-ip-forward \
-    --image-family ubuntu-1804-lts \
-    --image-project ubuntu-os-cloud \
-    --machine-type n1-standard-1 \
-    --metadata pod-cidr=10.200.${i}.0/24 \
-    --private-network-ip 10.240.0.2${i} \
-    --scopes compute-rw,storage-ro,service-management,service-control,logging-write,monitoring \
-    --subnet kubernetes \
-    --tags kubernetes-the-hard-way,worker
-done
 ```
 ## Common configuration
 
@@ -189,7 +159,7 @@ for i in {01..03}; do virsh autostart controller${i}; done
 for i in {01..03}; do virsh autostart worker${i}; done
 ```
 
-## Verification
+### Verification
 
 List the compute instances in your default compute zone:
 ```
@@ -212,10 +182,5 @@ Verify network configuration and SSH access:
 ```
 for i in {1,2}; do for j in {1..3}; do ssh 192.168.10.$i$j uname -a ;done; done
 ```
-
-## Configuring SSH Access
-
-SSH will be used to configure the controller and worker instances. When connecting to compute instances for the first time SSH keys will be generated for you and stored in the project or instance metadata as describe in the [connecting to instances](https://cloud.google.com/compute/docs/instances/connecting-to-instance) documentation.
-
 
 Next: [Provisioning a CA and Generating TLS Certificates](04-certificate-authority.md)
