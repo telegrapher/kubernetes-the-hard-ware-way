@@ -113,7 +113,7 @@ Create three compute instances which will host the Kubernetes control plane.
 
 Install the first VM, using virt-install
 ```
-virt-install --os-type=Linux --os-variant=debian9 --name controller01 --ram=4096 --vcpus=1 --disk path=/opt/kubernetes/images/controller01.qcow2,bus=virtio,size=10 --cdrom /opt/kubernetes/debian-9-amd64-netinst-serial.iso --network network=kubernetes-the-hard-way --graphics none
+virt-install --os-type=Linux --os-variant=debian9 --name controller01 --ram=4096 --vcpus=1 --disk path=/opt/kubernetes/images/controller01.qcow2,bus=virtio,size=10 --cdrom /opt/kubernetes/debian*.iso --network network=kubernetes-the-hard-way --graphics none
 ```
 It should bring automatically the console to perform the installation, but if we get disconnected for some reason, it can be reattached using:
 ```
@@ -149,6 +149,7 @@ Each worker instance requires a pod subnet allocation from the Kubernetes cluste
 Create three compute instances which will host the Kubernetes worker nodes:
 
 ```
+virt-install --os-type=Linux --os-variant=debian9 --name worker01 --ram=32768 --vcpus=8 --disk path=/opt/kubernetes/images/worker01.qcow2,bus=virtio,size=200 --cdrom /opt/kubernetes/debian*.iso --network network=kubernetes-the-hard-way --graphics none
 for i in 0 1 2; do
   gcloud compute instances create worker-${i} \
     --async \
