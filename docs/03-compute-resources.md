@@ -107,7 +107,7 @@ The compute instances in this lab will be provisioned using [Debian](https://www
 
 If you want to perform the complete installation over SSH, without X have a look at [this](https://github.com/telegrapher/debian-over-serial-port-howto)
 
-### Kubernetes Controllers
+## Kubernetes Controllers
 
 Create three compute instances which will host the Kubernetes control plane.
 
@@ -140,7 +140,7 @@ for i in 0 1 2; do
 done
 ```
 
-### Kubernetes Workers
+## Kubernetes Workers
 
 Each worker instance requires a pod subnet allocation from the Kubernetes cluster CIDR range. The pod subnet allocation will be used to configure container networking in a later exercise. The `pod-cidr` instance metadata will be used to expose pod subnet allocations to compute instances at runtime.
 
@@ -169,93 +169,53 @@ for i in 0 1 2; do
     --tags kubernetes-the-hard-way,worker
 done
 ```
+## Common configuration
 
-### Verification
+After cloning, we have 3 VMs using DHCP, now we need to give their proper configuration. In each one of them do:
+
+- Install openssh-server
+- Configure root access to the VM over SSH
+- Configure the network to a static IP address instead of the default DHCP and with 192.168.10.1 as default gw.
+  controller01 => 192.168.10.11/24
+  controller02 => 192.168.10.12/24
+  controller03 => 192.168.10.13/24
+  worker01     => 192.168.10.21/24
+  worker02     => 192.168.10.22/24
+  worker03     => 192.168.10.23/24
+
+Every VM should be autostarted:
+```
+for i in {01..03}; do virsh autostart controller${i}; done
+for i in {01..03}; do virsh autostart worker${i}; done
+```
+
+## Verification
 
 List the compute instances in your default compute zone:
-
 ```
-gcloud compute instances list
+virsh list
 ```
-
 > output
 
 ```
-NAME          ZONE        MACHINE_TYPE   PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP     STATUS
-controller-0  us-west1-c  n1-standard-1               10.240.0.10  XX.XXX.XXX.XXX  RUNNING
-controller-1  us-west1-c  n1-standard-1               10.240.0.11  XX.XXX.X.XX     RUNNING
-controller-2  us-west1-c  n1-standard-1               10.240.0.12  XX.XXX.XXX.XX   RUNNING
-worker-0      us-west1-c  n1-standard-1               10.240.0.20  XXX.XXX.XXX.XX  RUNNING
-worker-1      us-west1-c  n1-standard-1               10.240.0.21  XX.XXX.XX.XXX   RUNNING
-worker-2      us-west1-c  n1-standard-1               10.240.0.22  XXX.XXX.XX.XX   RUNNING
+ Id    Name                           State
+----------------------------------------------------
+ 16    controller01                   running
+ 17    controller02                   running
+ 18    controller03                   running
+ 19    worker01                       running
+ 20    worker02                       running
+ 21    worker03                       running
+```
+
+Verify network configuration and SSH access:
+```
+for i in {1,2}; do for j in {1..3}; do ssh 192.168.10.$i$j uname -a ;done; done
 ```
 
 ## Configuring SSH Access
 
 SSH will be used to configure the controller and worker instances. When connecting to compute instances for the first time SSH keys will be generated for you and stored in the project or instance metadata as describe in the [connecting to instances](https://cloud.google.com/compute/docs/instances/connecting-to-instance) documentation.
 
-Test SSH access to the `controller-0` compute instances:
-
-```
-gcloud compute ssh controller-0
-```
-
-If this is your first time connecting to a compute instance SSH keys will be generated for you. Enter a passphrase at the prompt to continue:
-
-```
-WARNING: The public SSH key file for gcloud does not exist.
-WARNING: The private SSH key file for gcloud does not exist.
-WARNING: You do not have an SSH key for gcloud.
-WARNING: SSH keygen will be executed to generate a key.
-Generating public/private rsa key pair.
-Enter passphrase (empty for no passphrase):
-Enter same passphrase again:
-```
-
-At this point the generated SSH keys will be uploaded and stored in your project:
-
-```
-Your identification has been saved in /home/$USER/.ssh/google_compute_engine.
-Your public key has been saved in /home/$USER/.ssh/google_compute_engine.pub.
-The key fingerprint is:
-SHA256:nz1i8jHmgQuGt+WscqP5SeIaSy5wyIJeL71MuV+QruE $USER@$HOSTNAME
-The key's randomart image is:
-+---[RSA 2048]----+
-|                 |
-|                 |
-|                 |
-|        .        |
-|o.     oS        |
-|=... .o .o o     |
-|+.+ =+=.+.X o    |
-|.+ ==O*B.B = .   |
-| .+.=EB++ o      |
-+----[SHA256]-----+
-Updating project ssh metadata...-Updated [https://www.googleapis.com/compute/v1/projects/$PROJECT_ID].
-Updating project ssh metadata...done.
-Waiting for SSH key to propagate.
-```
-
-After the SSH keys have been updated you'll be logged into the `controller-0` instance:
-
-```
-Welcome to Ubuntu 18.04 LTS (GNU/Linux 4.15.0-1006-gcp x86_64)
-
-...
-
-Last login: Sun May 13 14:34:27 2018 from XX.XXX.XXX.XX
-```
-
-Type `exit` at the prompt to exit the `controller-0` compute instance:
-
-```
-$USER@controller-0:~$ exit
-```
-> output
-
-```
-logout
-Connection to XX.XXX.XXX.XXX closed
-```
 
 Next: [Provisioning a CA and Generating TLS Certificates](04-certificate-authority.md)
