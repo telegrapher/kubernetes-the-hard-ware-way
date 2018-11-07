@@ -150,6 +150,10 @@ Create three compute instances which will host the Kubernetes worker nodes:
 
 ```
 virt-install --os-type=Linux --os-variant=debian9 --name worker01 --ram=32768 --vcpus=8 --disk path=/opt/kubernetes/images/worker01.qcow2,bus=virtio,size=200 --cdrom /opt/kubernetes/debian*.iso --network network=kubernetes-the-hard-way --graphics none
+
+virt-clone --original worker01 --name worker02 --auto-clone
+virt-clone --original worker01 --name worker03 --auto-clone
+
 for i in 0 1 2; do
   gcloud compute instances create worker-${i} \
     --async \
