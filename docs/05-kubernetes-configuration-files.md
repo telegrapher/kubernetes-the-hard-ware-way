@@ -23,7 +23,7 @@ When generating kubeconfig files for Kubelets the client certificate matching th
 Generate a kubeconfig file for each worker node:
 
 ```
-for instance in worker-0 worker-1 worker-2; do
+for instance in worker01 worker02 worker03; do
   kubectl config set-cluster kubernetes-the-hard-way \
     --certificate-authority=ca.pem \
     --embed-certs=true \
@@ -48,9 +48,9 @@ done
 Results:
 
 ```
-worker-0.kubeconfig
-worker-1.kubeconfig
-worker-2.kubeconfig
+worker01.kubeconfig
+worker02.kubeconfig
+worker03.kubeconfig
 ```
 
 ### The kube-proxy Kubernetes Configuration File
