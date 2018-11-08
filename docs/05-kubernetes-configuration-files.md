@@ -58,7 +58,6 @@ worker03.kubeconfig
 Generate a kubeconfig file for the `kube-proxy` service:
 
 ```
-{
   kubectl config set-cluster kubernetes-the-hard-way \
     --certificate-authority=ca.pem \
     --embed-certs=true \
@@ -77,7 +76,6 @@ Generate a kubeconfig file for the `kube-proxy` service:
     --kubeconfig=kube-proxy.kubeconfig
 
   kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
-}
 ```
 
 Results:
