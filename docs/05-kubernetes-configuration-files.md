@@ -13,7 +13,7 @@ Each kubeconfig requires a Kubernetes API Server to connect to. To support high 
 We'll use the example hardware IP address:
 
 ```
-KUBERNETES_PUBLIC_ADDRESS=10.0.0.3
+KUBERNETES_PUBLIC_ADDRESS=10.0.0.13
 ```
 
 ### The kubelet Kubernetes Configuration File
