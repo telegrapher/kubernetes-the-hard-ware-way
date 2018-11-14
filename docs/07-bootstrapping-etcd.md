@@ -24,8 +24,8 @@ wget -q --show-progress --https-only --timestamping \
 Extract and install the `etcd` server and the `etcdctl` command line utility:
 
 ```
-tar -xvf etcd-v3.3.9-linux-amd64.tar.gz
-mv etcd-v3.3.9-linux-amd64/etcd* /usr/local/bin/
+tar -xvf etcd-v3.3.10-linux-amd64.tar.gz
+mv etcd-v3.3.10-linux-amd64/etcd* /usr/local/bin/
 ```
 
 ### Configure the etcd Server
