@@ -4,11 +4,8 @@ In this lab you will bootstrap the Kubernetes control plane across three compute
 
 ## Prerequisites
 
-The commands in this lab must be run on each controller instance: `controller-0`, `controller-1`, and `controller-2`. Login to each controller instance using the `gcloud` command. Example:
+The commands in this lab must be run on each controller instance: `controller01`, `controller02`, and `controller03`. 
 
-```
-gcloud compute ssh controller-0
-```
 
 ### Running commands in parallel with tmux
 
@@ -28,44 +25,39 @@ Download the official Kubernetes release binaries:
 
 ```
 wget -q --show-progress --https-only --timestamping \
-  "https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kube-apiserver" \
-  "https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kube-controller-manager" \
-  "https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kube-scheduler" \
-  "https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kubectl"
+  "https://storage.googleapis.com/kubernetes-release/release/v1.12.2/bin/linux/amd64/kube-apiserver" \
+  "https://storage.googleapis.com/kubernetes-release/release/v1.12.2/bin/linux/amd64/kube-controller-manager" \
+  "https://storage.googleapis.com/kubernetes-release/release/v1.12.2/bin/linux/amd64/kube-scheduler" \
+  "https://storage.googleapis.com/kubernetes-release/release/v1.12.2/bin/linux/amd64/kubectl"
 ```
 
 Install the Kubernetes binaries:
 
 ```
-{
   chmod +x kube-apiserver kube-controller-manager kube-scheduler kubectl
   sudo mv kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/
-}
 ```
 
 ### Configure the Kubernetes API Server
 
 ```
-{
-  sudo mkdir -p /var/lib/kubernetes/
+mkdir -p /var/lib/kubernetes/
 
-  sudo mv ca.pem ca-key.pem kubernetes-key.pem kubernetes.pem \
+mv ca.pem ca-key.pem kubernetes-key.pem kubernetes.pem \
     service-account-key.pem service-account.pem \
     encryption-config.yaml /var/lib/kubernetes/
-}
 ```
 
-The instance internal IP address will be used to advertise the API Server to members of the cluster. Retrieve the internal IP address for the current compute instance:
+The VM IP address will be used to advertise the API Server to members of the cluster. Retrieve the internal IP address for the current compute instance:
 
 ```
-INTERNAL_IP=$(curl -s -H "Metadata-Flavor: Google" \
-  http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/ip)
+INTERNAL_IP=$(ip a | grep ens2 | grep inet | awk '{print $2}' | cut -d "/" -f 1)
 ```
 
 Create the `kube-apiserver.service` systemd unit file:
 
 ```
-cat <<EOF | sudo tee /etc/systemd/system/kube-apiserver.service
+cat <<EOF | tee /etc/systemd/system/kube-apiserver.service
 [Unit]
 Description=Kubernetes API Server
 Documentation=https://github.com/kubernetes/kubernetes
@@ -87,7 +79,7 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --etcd-cafile=/var/lib/kubernetes/ca.pem \\
   --etcd-certfile=/var/lib/kubernetes/kubernetes.pem \\
   --etcd-keyfile=/var/lib/kubernetes/kubernetes-key.pem \\
-  --etcd-servers=https://10.240.0.10:2379,https://10.240.0.11:2379,https://10.240.0.12:2379 \\
+  --etcd-servers=https://192.168.10.11:2379,https://192.168.10.12:2379,https://192.168.10.13:2379 \\
   --event-ttl=1h \\
   --experimental-encryption-provider-config=/var/lib/kubernetes/encryption-config.yaml \\
   --kubelet-certificate-authority=/var/lib/kubernetes/ca.pem \\
@@ -96,7 +88,7 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --kubelet-https=true \\
   --runtime-config=api/all \\
   --service-account-key-file=/var/lib/kubernetes/service-account.pem \\
-  --service-cluster-ip-range=10.32.0.0/24 \\
+  --service-cluster-ip-range=192.168.5.0/24 \\
   --service-node-port-range=30000-32767 \\
   --tls-cert-file=/var/lib/kubernetes/kubernetes.pem \\
   --tls-private-key-file=/var/lib/kubernetes/kubernetes-key.pem \\
@@ -114,13 +106,13 @@ EOF
 Move the `kube-controller-manager` kubeconfig into place:
 
 ```
-sudo mv kube-controller-manager.kubeconfig /var/lib/kubernetes/
+mv kube-controller-manager.kubeconfig /var/lib/kubernetes/
 ```
 
 Create the `kube-controller-manager.service` systemd unit file:
 
 ```
-cat <<EOF | sudo tee /etc/systemd/system/kube-controller-manager.service
+cat <<EOF | tee /etc/systemd/system/kube-controller-manager.service
 [Unit]
 Description=Kubernetes Controller Manager
 Documentation=https://github.com/kubernetes/kubernetes
@@ -128,7 +120,7 @@ Documentation=https://github.com/kubernetes/kubernetes
 [Service]
 ExecStart=/usr/local/bin/kube-controller-manager \\
   --address=0.0.0.0 \\
-  --cluster-cidr=10.200.0.0/16 \\
+  --cluster-cidr=192.168.128.0/23 \\
   --cluster-name=kubernetes \\
   --cluster-signing-cert-file=/var/lib/kubernetes/ca.pem \\
   --cluster-signing-key-file=/var/lib/kubernetes/ca-key.pem \\
@@ -136,7 +128,7 @@ ExecStart=/usr/local/bin/kube-controller-manager \\
   --leader-elect=true \\
   --root-ca-file=/var/lib/kubernetes/ca.pem \\
   --service-account-private-key-file=/var/lib/kubernetes/service-account-key.pem \\
-  --service-cluster-ip-range=10.32.0.0/24 \\
+  --service-cluster-ip-range=192.168.5.0/24 \\
   --use-service-account-credentials=true \\
   --v=2
 Restart=on-failure
@@ -152,13 +144,13 @@ EOF
 Move the `kube-scheduler` kubeconfig into place:
 
 ```
-sudo mv kube-scheduler.kubeconfig /var/lib/kubernetes/
+mv kube-scheduler.kubeconfig /var/lib/kubernetes/
 ```
 
 Create the `kube-scheduler.yaml` configuration file:
 
 ```
-cat <<EOF | sudo tee /etc/kubernetes/config/kube-scheduler.yaml
+cat <<EOF | tee /etc/kubernetes/config/kube-scheduler.yaml
 apiVersion: componentconfig/v1alpha1
 kind: KubeSchedulerConfiguration
 clientConnection:
@@ -191,11 +183,9 @@ EOF
 ### Start the Controller Services
 
 ```
-{
-  sudo systemctl daemon-reload
-  sudo systemctl enable kube-apiserver kube-controller-manager kube-scheduler
-  sudo systemctl start kube-apiserver kube-controller-manager kube-scheduler
-}
+  systemctl daemon-reload
+  systemctl enable kube-apiserver kube-controller-manager kube-scheduler
+  systemctl start kube-apiserver kube-controller-manager kube-scheduler
 ```
 
 > Allow up to 10 seconds for the Kubernetes API Server to fully initialize.
@@ -275,7 +265,7 @@ Connection: keep-alive
 ok
 ```
 
-> Remember to run the above commands on each controller node: `controller-0`, `controller-1`, and `controller-2`.
+> Remember to run the above commands on each controller node: `controller01`, `controller02`, and `controller03`.
 
 ## RBAC for Kubelet Authorization
 
